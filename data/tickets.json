@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "name": "Manchester United vs Manchester City",
+        "date": "25/05/2024",
+        "place": "Old Trafford",
+        "typeSeat": "A-1"
+    },
+    {
+        "id": 2,
+        "name": "Manchester United vs Chelsea",
+        "date": "30/05/2024",
+        "place": "Old Trafford",
+        "typeSeat": "A-3"
+    },
+    {
+        "id": 3,
+        "name": "Arsenal vs Manchester City",
+        "date": "30/05/2024",
+        "place": "Emirates Stadium",
+        "typeSeat": "B-23"
+    },
+    {
+        "id": 4,
+        "name": "Brighton vs Manchester City",
+        "date": "25/05/2024",
+        "place": "Amex Stadium",
+        "typeSeat": "D-1"
+    }
+]

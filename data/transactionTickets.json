@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "TicketId": 1,
+        "TransactionId": 1
+    },
+    {
+        "id": 2,
+        "TicketId": 1,
+        "TransactionId": 2
+    },
+    {
+        "id": 3,
+        "TicketId": 3,
+        "TransactionId": 3
+    },
+    {
+        "id": 4,
+        "TicketId": 3,
+        "TransactionId": 3
+    }
+]

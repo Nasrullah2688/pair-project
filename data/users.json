@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "name": "Rama",
+        "email": "rama@mail.com",
+        "password": "rama123",
+        "role": "user"
+    },
+    {
+        "id": 2,
+        "name": "Ramzes",
+        "email": "ramzes@mail.com",
+        "password": "ramzes123",
+        "role": "user"
+    },
+    {
+        "id": 3,
+        "name": "Nasrul",
+        "email": "nasrul@mail.com",
+        "password": "nasrul123",
+        "role": "user"
+    },
+    {
+        "id": 4,
+        "name": "Iman",
+        "email": "iman@mail.com",
+        "password": "iman123",
+        "role": "user"
+    }
+]
