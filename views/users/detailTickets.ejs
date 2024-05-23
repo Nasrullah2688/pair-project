@@ -1,0 +1,33 @@
+<!-- detailTickets.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>BELI BELI</h1>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Stock</th>
+            <th>Place</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td><%= data.name %></td>
+            <td><%= data.stock %></td>
+            <td><%= data.place %></td>
+            <td><%= data.price %></td>
+            <td>
+                <form action="/tickets/<%= data.id %>/take" method="POST"> <!-- Perbarui action form -->
+                    <input type="number" name="stock" min="1" max="<%= data.stock %>" required> <!-- Tambahkan input untuk jumlah tiket yang dibeli -->
+                    <input type="submit" value="Take">
+                </form>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

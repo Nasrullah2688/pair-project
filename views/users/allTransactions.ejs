@@ -1,0 +1,38 @@
+<!-- allTransactions.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Transactions</title>
+</head>
+<body>
+    <h1>All Transactions</h1>
+    <table border="1">
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Ticket</th>
+            <th>Price Total</th>
+        </tr>
+        <% transactions.forEach((transaction, i)=> { %>
+                <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= transaction.name %></td>
+                    <td><%= transaction.stock %></td>
+                    <td><%= transaction.priceTotal %></td>
+                </tr>
+        <% }) %>
+        <tr>
+            <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+            <td><%= totalAmount %></td>
+        </tr>
+    </table>
+        <form action="/transaksi/beli-invoice" method="GET">
+            <input type="submit" value="Buy">
+        </form>
+        
+    
+
+</body>
+</html>
