@@ -12,6 +12,8 @@ app.get('/tickets/:id', ControllerUser.detailTicket);
 app.post('/tickets/:id/take', ControllerUser.takeTicket); // Tambahkan rute untuk mengambil tiket
 app.get('/transactions', ControllerUser.allTransactions);
 app.get('/transaksi/beli-invoice', ControllerUser.beliDanBuatInvoice);
+app.get('/users', ControllerUser.userProfile)
+app.post('/users', ControllerUser.handlerProfile)
 
 
 app.get('/admin/tickets', ControllerAdmin.adminHome);

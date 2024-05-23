@@ -1,8 +1,31 @@
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
-const { Ticket, Transaction, TransactionTicket } = require('../models');
+const { Ticket, Transaction, TransactionTicket, UserProfile } = require('../models');
 
 class ControllerUser {
+
+    static async userProfile(req, res) {//render
+        try {
+            res.render('users/userProfile')
+        } catch (error) {
+            res.send(error)
+        }
+    }
+
+    static async handlerProfile(req, res) {//render
+        try {
+            const {bio} = req.body
+            const {photo} = req.filePath
+
+            await UserProfile.create({bio,photo})
+            res.redirect('/')
+        } catch (error) {
+            res.send(error)
+        }
+    }
+
+
+
     static async home(req, res) {
         try {
             let data = await Ticket.findAll()
