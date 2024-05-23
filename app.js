@@ -15,20 +15,15 @@ app.get('/transaksi/beli-invoice', ControllerUser.beliDanBuatInvoice);
 
 
 app.get('/admin/tickets', ControllerAdmin.adminHome);
-
 app.get('/admin/tickets/add', ControllerAdmin.addTicketForm);
-
-// Rute untuk menambahkan tiket (handle POST request dari form tambah tiket)
 app.post('/admin/tickets/add', ControllerAdmin.addTicket);
-
-// Rute untuk menampilkan form edit tiket
 app.get('/admin/tickets/:id/edit', ControllerAdmin.editTicketForm);
-
-// Rute untuk mengedit tiket (handle POST request dari form edit tiket)
 app.post('/admin/tickets/:id/edit', ControllerAdmin.editTicket);
-
-// Rute untuk menghapus tiket
 app.post('/admin/tickets/:id/delete', ControllerAdmin.deleteTicket);
+
+app.get('/login', ControllerAdmin.loginPage)
+app.get('/signup', ControllerAdmin.signupPage)
+app.post('/validateAccount', ControllerAdmin.validateAccount)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
