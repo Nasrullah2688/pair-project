@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Manchester United vs Liverpool",
+        "date": "2024-06-15",
+        "place": "Old Trafford",
+        "typeSeat": "VIP",
+        "stock": 50,
+        "price": 150000
+    },
+    {
+        "name": "Chelsea vs Arsenal",
+        "date": "2024-07-20",
+        "place": "Stamford Bridge",
+        "typeSeat": "Regular",
+        "stock": 200,
+        "price": 75000
+    },
+    {
+        "name": "Manchester City vs Tottenham",
+        "date": "2024-08-05",
+        "place": "Etihad Stadium",
+        "typeSeat": "Economy",
+        "stock": 300,
+        "price": 50000
+    },
+    {
+        "name": "Everton vs West Ham",
+        "date": "2024-09-10",
+        "place": "Goodison Park",
+        "typeSeat": "VIP",
+        "stock": 60,
+        "price": 150000
+    },
+    {
+        "name": "Leicester City vs Aston Villa",
+        "date": "2024-10-25",
+        "place": "King Power Stadium",
+        "typeSeat": "Regular",
+        "stock": 150,
+        "price": 75000
+    }
+]

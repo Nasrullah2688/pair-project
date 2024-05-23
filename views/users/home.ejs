@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>BELI BELI</h1>
+    <TABLE>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Place</th>
+            <th>Action</th>
+        </tr>
+        <% data.forEach(el => { %>
+            <tr>
+                <td><%= el.name %></td>
+                <td><%= el.date %></td>
+                <td><%= el.place %></td>
+                <td>
+                    <a href="/tickets/<%= el.id %>">see</a>
+                </td>
+            </tr>
+        <% }) %>
+    </TABLE>
+</body>
+</html>
