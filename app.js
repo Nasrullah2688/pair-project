@@ -1,32 +1,30 @@
 const express = require('express');
-const ControllerUser = require('./controllers/controllerUser');
-const ControllerAdmin = require('./controllers/controllerAdmin');
+const session = require('express-session');
 const app = express();
 const port = 3000;
+
+const userRoutes = require('./routes/userRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const routerBio = require('./routes/routerBio')
+const authMiddleware = require('./middleware/auth');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', ControllerUser.home);
-app.get('/tickets/:id', ControllerUser.detailTicket);
-app.post('/tickets/:id/take', ControllerUser.takeTicket); // Tambahkan rute untuk mengambil tiket
-app.get('/transactions', ControllerUser.allTransactions);
-app.get('/transaksi/beli-invoice', ControllerUser.beliDanBuatInvoice);
-app.get('/users', ControllerUser.userProfile)
-app.post('/users', ControllerUser.handlerProfile)
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+}));
 
-
-app.get('/admin/tickets', ControllerAdmin.adminHome);
-app.get('/admin/tickets/add', ControllerAdmin.addTicketForm);
-app.post('/admin/tickets/add', ControllerAdmin.addTicket);
-app.get('/admin/tickets/:id/edit', ControllerAdmin.editTicketForm);
-app.post('/admin/tickets/:id/edit', ControllerAdmin.editTicket);
-app.post('/admin/tickets/:id/delete', ControllerAdmin.deleteTicket);
-
-app.get('/login', ControllerAdmin.loginPage)
-app.get('/signup', ControllerAdmin.signupPage)
-app.post('/validateAccount', ControllerAdmin.validateAccount)
+// Terapkan middleware di level aplikasi
+app.use('/profile', authMiddleware); // Terapkan middleware auth untuk rute profile
+app.use('/admin', authMiddleware); // Jika Anda memiliki rute admin yang juga memerlukan autentikasi
+app.use('/', userRoutes);
+app.use('/', adminRoutes);
+app.use('/', routerBio); // Tambahkan routerBio ke dalam aplikasi
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port ${port}`);
 });

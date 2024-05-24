@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home Bio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      border-bottom: 1px solid #ddd;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* This makes sure items are spaced apart */
+    }
+    li:last-child {
+      border-bottom: none;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    .user-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+    .user-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .user-bio {
+      color: #666;
+      margin-top: 5px;
+    }
+    .edit-link,
+    .add-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    .edit-link:hover,
+    .add-link:hover {
+      background-color: #0056b3;
+    }
+    .add-link {
+      display: block;
+      text-align: center;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>User Bios</h1>
+    <a href="/userprofiles/create" class="add-link">Add New User Profile</a>
+    <ul>
+      <% userProfiles.forEach(userProfile => { %>
+        <li>
+          <div class="user-info">
+            <img src="<%= userProfile.photo %>" alt="User Photo" class="user-photo">
+            <div>
+              <div class="user-name"><%= userProfile.User.name %></div>
+              <div class="user-bio"><%= userProfile.bio %></div>
+            </div>
+          </div>
+          <a href="/userprofiles/<%= userProfile.id %>/edit" class="edit-link">Edit</a>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</body>
+</html>

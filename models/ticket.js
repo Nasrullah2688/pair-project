@@ -1,11 +1,26 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model,Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Ticket extends Model {
     static associate(models) {
       this.hasMany(models.TransactionTicket, { foreignKey: 'TicketId' });
     }
+
+    static getByTypeSeat(role) {
+      let options = {
+        where: {}
+      };
+    
+      if (role && role !== "all") {
+        options.where.typeSeat = {
+          [Op.eq]: role
+        };
+      }
+    
+      return Ticket.findAll(options);
+    }
+    
   }
   
   Ticket.init({
@@ -15,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Name cannot be empty"
+        },
+        notNull: {
+          msg: "Name cannot be null"
         }
       }
     },
@@ -24,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Date cannot be empty"
+        },
+        notNull: {
+          msg: "Date cannot be null"
         }
       }
     },
@@ -33,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Place cannot be empty"
+        },
+        notNull: {
+          msg: "Place cannot be null"
         }
       }
     },
@@ -42,6 +66,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Type of seat cannot be empty"
+        },
+        notNull: {
+          msg: "Type of seat cannot be null"
         }
       }
     },
@@ -51,6 +78,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Stock cannot be empty"
+        },
+        notNull: {
+          msg: "Stock cannot be null"
         },
         isInt: {
           msg: "Stock must be an integer"
@@ -67,6 +97,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: "Price cannot be empty"
+        },
+        notNull: {
+          msg: "Price cannot be null"
         },
         isInt: {
           msg: "Price must be an integer"

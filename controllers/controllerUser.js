@@ -1,45 +1,61 @@
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const { Ticket, Transaction, TransactionTicket, UserProfile } = require('../models');
+const {Op} = require('sequelize')
+const formatRupiah = require('../helper/format')
 
 class ControllerUser {
 
-    static async userProfile(req, res) {//render
+    static async showUserProfile(req, res) {
         try {
-            res.render('users/userProfile')
+            const { id } = req.params;
+            const userProfile = await UserProfile.findOne({ where: { id }, include: ['User'] });
+
+
+            res.render('users/showUserProfile', { userProfile });
         } catch (error) {
-            res.send(error)
+            res.send(error);
         }
     }
-
-    static async handlerProfile(req, res) {//render
-        try {
-            const {bio} = req.body
-            const {photo} = req.filePath
-
-            await UserProfile.create({bio,photo})
-            res.redirect('/')
-        } catch (error) {
-            res.send(error)
-        }
-    }
-
 
 
     static async home(req, res) {
         try {
-            let data = await Ticket.findAll()
-            res.render('users/home', { data })
+            let deta;
+            let { role } = req.query;
+    
+            if (role) {
+                deta = await Ticket.getByTypeSeat(role);
+            } else {
+                deta = await Ticket.findAll();
+            }
+    
+            const { search } = req.query;
+            if (search) {
+                deta = await Ticket.findAll({
+                    where: {
+                        name: {
+                            [Op.iLike]: `%${search}%`
+                        }
+                    }
+                });
+            }
+    
+            const userId = req.session.user.id;
+            const userProfile = await UserProfile.findOne({ where: { UserId: userId } });
+    
+            res.render('users/home', { deta, userProfile });
         } catch (error) {
-            res.send(error)
+            res.send(error);
         }
     }
+
 
     static async detailTicket(req, res) {
         try {
             const { id } = req.params
             let data = await Ticket.findByPk(id)
-            res.render('users/detailTickets', { data })
+            res.render('users/detailTickets', { data, formatRupiah })
         } catch (error) {
             res.send(error)
         }
@@ -47,41 +63,48 @@ class ControllerUser {
 
     static async takeTicket(req, res) {
         try {
-            const { id } = req.params
-            const { stock } = req.body
+            const { id } = req.params;
+            const { stock } = req.body;
             const ticket = await Ticket.findByPk(id);
-            const totalPrice = ticket.price * stock // Hitung total harga
-            const transaction = await Transaction.sequelize.transaction() // Mulai transaksi dalam transaksi tertentu
-
+            const totalPrice = ticket.price * stock; // Calculate total price
+    
+            // Access the current user's ID from the session
+            const userId = req.session.user.id;
+    
+            const transaction = await Transaction.sequelize.transaction(); // Start a transaction
+    
             try {
                 const newTransaction = await Transaction.create({
                     name: ticket.name,
                     stock,
                     date: new Date(),
-                    priceTotal: totalPrice
-                }, { transaction })
-
+                    priceTotal: totalPrice,
+                    UserId: userId // Associate the current user's ID with the transaction
+                }, { transaction });
+    
                 await TransactionTicket.create({
                     TicketId: ticket.id,
                     TransactionId: newTransaction.id
-                }, { transaction })
-
+                }, { transaction });
+    
                 await Ticket.update({
                     stock: Ticket.sequelize.literal(`stock - ${stock}`)
                 }, {
                     where: { id: ticket.id },
                     transaction
-                })
-
-                await transaction.commit()
-                res.redirect('/')
+                });
+    
+                await transaction.commit();
+                res.redirect('/');
             } catch (error) {
-                res.send(error)
+                await transaction.rollback(); // Rollback the transaction if an error occurs
+                res.send(error);
             }
         } catch (error) {
-            res.send(error)
+            res.send(error);
         }
     }
+    
 
     static async allTransactions(req, res) {
         try {
@@ -91,16 +114,16 @@ class ControllerUser {
 
             let totalAmount = 0
             transactions.forEach(transaction => {
-                totalAmount += transaction.priceTotal
+                totalAmount += transaction.discountedPriceTotal
             })
 
-            res.render('users/allTransactions', { transactions, totalAmount })
+            res.render('users/allTransactions', { transactions, totalAmount, formatRupiah})
         } catch (error) {
             res.send(error)
         }
     }
     
-    static async beliDanBuatInvoice(req, res) {
+    static async beliDanBuatInvoice(req, res) {//ini yang ada nested include untuk cetak invoice
         try {
             const transactions = await Transaction.findAll({
                 include: [
@@ -134,7 +157,7 @@ class ControllerUser {
     
             transactions.forEach(async (transaction) => {
                 const tickets = transaction.TransactionTickets.map(tt => tt.Ticket)
-                totalAmount += transaction.priceTotal
+                totalAmount += transaction.discountedPriceTotal
     
                 for (let i = 0; i < transaction.stock; i++) {
                     doc.addPage()
@@ -148,8 +171,7 @@ class ControllerUser {
                     doc.moveDown();
                     doc.font('Helvetica').fontSize(12).text(`Nama Pertandingan: ${transaction.name}`, { align: 'left' });
                     doc.moveDown();
-                    doc.font('Helvetica').fontSize(12).text(`Jumlah: ${transaction.priceTotal / transaction.stock}`, { align: 'left' });
-                    doc.moveDown();
+            
                 }
     
                 await Transaction.destroy({
@@ -159,7 +181,7 @@ class ControllerUser {
     
             doc.addPage().font('Helvetica-Bold').fontSize(14).text('Total Pembayaran', { align: 'center' });
             doc.moveDown();
-            doc.font('Helvetica').fontSize(12).text(`Total: ${totalAmount}`, { align: 'left' });
+            doc.font('Helvetica').fontSize(12).text(`Total: ${formatRupiah(totalAmount)}`, { align: 'left' });
     
             doc.end();
         } catch (error) {

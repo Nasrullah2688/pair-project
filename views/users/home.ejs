@@ -3,27 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home - Beli Tiket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4c4c4c;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .event-list {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .event-header {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .event-header h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .event-header .sort-by-date {
+            font-size: 0.9em;
+            color: #076B4E;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .event {
+            display: flex;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+        }
+        .event:last-child {
+            border-bottom: none;
+        }
+        .event-date {
+            text-align: center;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        .event-details {
+            flex-grow: 1;
+        }
+        .event-details h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        .event-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .event-action {
+            text-align: right;
+        }
+        .event-action a {
+            text-decoration: none;
+            color: #076B4E;
+            padding: 8px 12px;
+            border: 1px solid #710000;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .event-action a:hover {
+            background-color: #076B4E;
+            color: white;
+        }
+        .btn-transactions {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            background-color: #d12626;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn-transactions:hover {
+            background-color: #710000;
+        }
+    </style>
 </head>
 <body>
-    <h1>BELI BELI</h1>
-    <TABLE>
-        <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Place</th>
-            <th>Action</th>
-        </tr>
-        <% data.forEach(el => { %>
-            <tr>
-                <td><%= el.name %></td>
-                <td><%= el.date %></td>
-                <td><%= el.place %></td>
-                <td>
-                    <a href="/tickets/<%= el.id %>">see</a>
-                </td>
-            </tr>
-        <% }) %>
-    </TABLE>
+    <div class="header">
+        <h1>Tiket Nonton Bola Live di Stadion</h1>
+        <a href="/logout" class="btn-logout">Logout</a>
+    </div>
+    <div class="container">
+        <a href="/transactions" class="btn-transactions">Daftar Tiket yang Dibeli</a>
+        <div class="event-list">
+            <div class="event-header">
+                <h2><%= deta.length %> event di semua lokasi</h2>
+                <a href="/?role=all">
+                    <button type="button" value="all">All</button>
+                </a>
+                <a href="/?role=VIP">
+                    <button type="button" value="VIP">VIP</button>
+                </a>
+                <a href="/?role=Regular">
+                    <button type="button" value="Regular">Regular</button>
+                </a>
+                <a href="/?role=Economy">
+                    <button type="button" value="Economy">Economy</button>
+                </a>
+            
+                <div><form action="/" method="GET">
+                    <input type="text" name="search" placeholder="Search by name" >
+                    <button type="submit">Search</button>
+                </form></div>
+            </div>
+            <% deta.forEach(el => { %>
+                <div class="event">
+                    <div class="event-date">
+                        <div><%= new Date(el.date).toLocaleString('en-US', { month: 'short' }).toUpperCase() %></div>
+                        <div><%= new Date(el.date).getDate() %></div>
+                        <div><%= new Date(el.date).toLocaleString('en-US', { weekday: 'short' }).toUpperCase() %></div>
+                        <div><%= new Date(el.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></div>
+                    </div>
+                    <div class="event-details">
+                        <h3><%= el.name %></h3>
+                        <p><%= el.place %></p>
+                        <p>In <%= Math.ceil((new Date(el.date) - new Date()) / (1000 * 60 * 60 * 24)) %> days</p>
+                        <p><%= el.typeSeat %></p>
+                    </div>
+                    <div class="event-action">
+                        <a href="/tickets/<%= el.id %>">Lihat Tiket</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
 </body>
 </html>
