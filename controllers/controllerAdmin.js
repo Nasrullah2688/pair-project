@@ -24,7 +24,7 @@ class ControllerAdmin {
     
             if (name) { // Registration
                 if (role === "admin" || role === "buyer") {
-                    const data = await User.create({ name, email, password, role });
+                    await User.create({ name, email, password, role });
                     res.redirect(role === "admin" ? `/admin/tickets` : `/`);
                 }
             } else { // Login
