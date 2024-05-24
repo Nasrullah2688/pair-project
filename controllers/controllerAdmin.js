@@ -1,20 +1,20 @@
-const { Ticket,User } = require('../models');
+const { Ticket, User } = require('../models');
+const bcrypt = require('bcryptjs');
 
 class ControllerAdmin {
     static async loginPage(req, res) {
         try {
-            res.render("Admin/loginPage")
+            res.render("admin/loginPage");
         } catch (error) {
-            res.send(error)
-            
+            res.send(error);
         }
     }
 
     static async signupPage(req, res) {
         try {
-            res.render("Admin/signupPage")
+            res.render("admin/signupPage");
         } catch (error) {
-            res.send(error)
+            res.send(error);
         }
     }
 
@@ -22,123 +22,114 @@ class ControllerAdmin {
         try {
             const { name, email, password, role } = req.body;
     
-            if (name) { // Jika ada nama, ini berarti proses pendaftaran
-                if (role === "admin") {
-                    const data = await User.create({
-                        name: name,
-                        email: email,
-                        password: password,
-                        role: role
-                    });
-                    res.redirect(`/admin/tickets`);
-                } else if (role === "buyer") {
-                    const data = await User.create({
-                        name: name,
-                        email: email,
-                        password: password,
-                        role: role
-                    });
-                    res.redirect(`/`);
+            if (name) { // Registration
+                if (role === "admin" || role === "buyer") {
+                    const data = await User.create({ name, email, password, role });
+                    res.redirect(role === "admin" ? `/admin/tickets` : `/`);
                 }
-            } else { // Jika tidak ada nama, ini berarti proses login
-                const data = await User.findOne({
-                    where: { email, password }
-                });
-                if (data) {
-                    if (data.role === "buyer" || data.role === "Buyer") {
-                        res.redirect(`/`);
-                    } else if (data.role === "admin" || data.role === "Admin") {
-                        res.redirect(`/admin/tickets`);
+            } else { // Login
+                const user = await User.findOne({ where: { email } });
+                if (user) {
+                    const isPasswordValid = await bcrypt.compare(password, user.password);
+                    if (isPasswordValid) {
+                        req.session.user = { id: user.id, role: user.role };
+                        res.redirect(user.role === "admin" ? `/admin/tickets` : `/`);
+                    } else {
+                        throw new Error("Invalid credentials");
                     }
                 } else {
-                    throw new Error("Hei anda penyusup! muhasabah diri anda!!! Data kamu berbeda dengan data kami!");
+                    throw new Error("Invalid credentials");
                 }
             }
         } catch (err) {
             console.error(err);
-            res.send("Hei anda penyusup! muhasabah diri anda!!! Data kamu berbeda dengan data kami!");
+            res.send("Invalid credentials");
         }
     }
+    
 
     static async adminHome(req, res) {
         try {
-            const data = await Ticket.findAll()
-            res.render('admin/adminHome', { data })
+            const {name} = req.query
+            const data = await Ticket.findAll();
+            res.render('admin/adminHome', { data ,name});
         } catch (error) {
-            res.send(error)
+            res.send(error);
         }
     }
 
-    static async addTicketForm(req, res) {//ini unruk render
+    static async addTicketForm(req, res) {
         try {
-            res.render('admin/addTicket')
+            let {errors}=req.query
+            res.render('admin/addTicket',{errors});
         } catch (error) {
-            res.send(error)
-
+            res.send(error);
         }
     }
 
-    static async addTicket(req, res) {//ini untuk handler 
+    static async addTicket(req, res) {
         try {
             const { name, date, place, typeSeat, stock, price } = req.body;
-            const newTicket = await Ticket.create({
-                name,
-                date,
-                place,
-                typeSeat,
-                stock,
-                price
-            });
+            await Ticket.create({ name, date, place, typeSeat, stock, price });
             res.redirect('/admin/tickets');
         } catch (error) {
-            res.send(error)
+            if (error.name === 'SequelizeValidationError') {
+                const errors = error.errors.map(err => err.message)
+                res.redirect(`/admin/tickets/add?errors=${errors}`)
+            } else {
+                res.send(error)
+            }
+        }
+    }
+    
 
+    static async editTicketForm(req, res) {
+        try {
+            const { id } = req.params;
+            const {errors} = req.query
+            const ticket = await Ticket.findByPk(id);
+            res.render('admin/editTicket', { ticket ,errors});
+        } catch (error) {
+            res.send(error);
         }
     }
 
-    static async editTicketForm(req, res) {//ini untuk rander
+    static async editTicket(req, res) {
+        const { id } = req.params;
         try {
-            const { id } = req.params
-            const ticket = await Ticket.findByPk(id)
-            res.render('admin/editTicket', { ticket })
+            const { name, date, place, typeSeat, stock, price } = req.body;
+            await Ticket.update({ name, date, place, typeSeat, stock, price }, { where: { id } });
+            res.redirect('/admin/tickets');
         } catch (error) {
-            res.send(error)
-
-        }
-    }
-
-    static async editTicket(req, res) {//ini untuk handler
-        try {
-            const { id } = req.params
-            const { name, date, place, typeSeat, stock, price } = req.body
-            await Ticket.update({
-                name,
-                date,
-                place,
-                typeSeat,
-                stock,
-                price
-            }, {
-                where: { id }
-            });
-            res.redirect('/admin/tickets')
-        } catch (error) {
-            res.send(error)
-
+            if (error.name === 'SequelizeValidationError') {
+                const errors = error.errors.map(err => err.message)
+                res.redirect(`/admin/tickets/${id}/edit?errors=${errors}`)
+            } else {
+                res.send(error)
+            }
         }
     }
 
     static async deleteTicket(req, res) {
         try {
-            const { id } = req.params
-            await Ticket.destroy({ where: { id } })
-            res.redirect('/admin/tickets')// Mengarahkan kembali ke halaman admin
+            const { id } = req.params;
+            const ticket = await Ticket.findByPk(id)
+            let name = `${ticket.name}`
+            await Ticket.destroy({ where: { id } });
+            res.redirect(`/admin/tickets?name=${name}`);
         } catch (error) {
-            res.send(error)
-
+            res.send(error);
         }
     }
-    
+
+    static async logout(req, res) {
+        try {
+            await req.session.destroy();
+            res.redirect('/login');
+        } catch (err) {
+            res.send(err)
+        }
+    }
 }
 
 module.exports = ControllerAdmin;

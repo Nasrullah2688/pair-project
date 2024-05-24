@@ -4,27 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #97C841;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #5f9700;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add Ticket</h1>
-    <form action="/admin/tickets/add" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br><br>
-        <label for="place">Place:</label>
-        <input type="text" id="place" name="place" required><br><br>
-        <label for="typeSeat">Type of Seat:</label>
-        <select id="typeSeat" name="typeSeat" required>
-            <option value="VIP">VIP</option>
-            <option value="Regular">Regular</option>
-            <option value="Economy">Economy</option>
-        </select><br><br>
-        <label for="stock">Stock:</label>
-        <input type="number" id="stock" name="stock" required><br><br>
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price" required><br><br>
-        <input type="submit" value="Add Ticket">
-    </form>
+    <div class="container">
+        <h1>Add Ticket</h1>
+        <% if (errors) { %>
+            <% errors = errors.split(',') %>
+            <% errors.forEach(el => { %>
+                <p style="color: red;"><%= el %></p> 
+            <% }) %>
+        <% } %>
+    
+        <form action="/admin/tickets/add" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="place">Place:</label>
+            <input type="text" id="place" name="place" required>
+
+            <label for="typeSeat">Type of Seat:</label>
+            <select id="typeSeat" name="typeSeat" required>
+                <option value="VIP">VIP</option>
+                <option value="Regular">Regular</option>
+                <option value="Economy">Economy</option>
+            </select>
+
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" required>
+
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required>
+
+            <input type="submit" value="Add Ticket">
+        </form>
+    </div>
 </body>
 </html>
